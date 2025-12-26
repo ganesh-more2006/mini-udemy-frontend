@@ -10,7 +10,7 @@ const Signup = () => {
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/auth/register', formData);
+            await axios.post('mini-udemy-backend-production-855e.up.railway.app/api/auth/register', formData);
             toast.success("Success! Please Login.");
             navigate('/login');
         } catch (err) { toast.error(err.response?.data?.message || "Error"); }

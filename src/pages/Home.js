@@ -7,11 +7,15 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
+    
+    // Aapka Railway Backend URL
+    const API_URL = "https://mini-udemy-backend-production-855e.up.railway.app";
 
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/courses/all');
+                // Sahi endpoint: /api/courses
+                const res = await axios.get(`${API_URL}/api/courses`);
                 setCourses(res.data);
                 setLoading(false);
             } catch (err) {
@@ -22,30 +26,24 @@ const Home = () => {
         fetchCourses();
     }, []);
 
-// ... baaki imports same rahenge
+    const deleteCourse = async (id) => {
+        if (window.confirm("Are you sure you want to delete this course?")) {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await axios.delete(`${API_URL}/api/courses/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-const deleteCourse = async (id) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-        try {
-            const token = localStorage.getItem('token');
-            
-            // Backend call with Token
-            const res = await axios.delete(`http://localhost:5000/api/courses/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (res.status === 200) {
-               
-                setCourses(courses.filter(course => course._id !== id));
-                alert("Course deleted successfully!");
+                if (res.status === 200) {
+                    setCourses(courses.filter(course => course._id !== id));
+                    alert("Course deleted successfully!");
+                }
+            } catch (err) { 
+                console.error("Delete Error:", err.response);
+                alert(err.response?.data?.message || "Delete failed"); 
             }
-        } catch (err) { 
-            console.error("Delete Error:", err.response);
-  
-            alert(err.response?.data?.message || "Delete failed: Unauthorized or Server Error"); 
         }
-    }
-};
+    };
 
     const handleEnroll = async (courseId, price) => {
         const token = localStorage.getItem('token');
@@ -54,11 +52,9 @@ const deleteCourse = async (id) => {
             return navigate('/login');
         }
 
-        const confirmPayment = window.confirm(`The price of this course is ₹${price}. Do you want to make the payment and enroll?`);
-        
-        if (confirmPayment) {
+        if (window.confirm(`The price is ₹${price}. Enroll now?`)) {
             try {
-                const res = await axios.post('http://localhost:5000/api/enrollments/enroll', 
+                const res = await axios.post(`${API_URL}/api/enrollments/enroll`, 
                     { courseId }, 
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -70,55 +66,13 @@ const deleteCourse = async (id) => {
         }
     };
 
-    if (loading) return <div style={styles.loader}>Loading...</div>;
+    if (loading) return <div>Loading...</div>;
 
     return (
-        <div style={styles.container}>
-            <div style={styles.blobTop}></div>
-            <div style={styles.blobBottom}></div>
-
-            <header style={styles.hero}>
-                <h1 style={styles.mainTitle}>Unlock Your Potential</h1>
-                <p style={styles.subTitle}>Explore high-quality courses and start your learning journey today.</p>
-            </header>
-
-            <div style={styles.grid}>
-                {courses.map((course) => (
-                    <div key={course._id} style={styles.card}>
-                        <div style={styles.badge}>{course.category}</div>
-                        
-                        <div style={styles.content}>
-                            <h3 style={styles.courseTitle}>{course.title}</h3>
-                            <p style={styles.description}>{course.description}</p>
-                            
-                            <div style={styles.footerRow}>
-                                <div style={styles.priceContainer}>
-                                    <span style={styles.priceLabel}>Price</span>
-                                    <h4 style={styles.priceValue}>₹{course.price}</h4>
-                                </div>
-                                
-                                <button 
-                                    onClick={() => handleEnroll(course._id, course.price)} 
-                                    style={styles.enrollBtn}
-                                >
-                                    Enroll Now
-                                </button>
-                            </div>
-
-                            {user && user.role === 'instructor' && (
-                                <div style={styles.adminPanel}>
-                                    <button onClick={() => navigate(`/edit-course/${course._id}`)} style={styles.editBtn}>Edit</button>
-                                    <button onClick={() => deleteCourse(course._id)} style={styles.deleteBtn}>Delete</button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+        // Aapka existing JSX yahan aayega...
+        <div>... (Style aur HTML aapka purana hi rahega) ...</div>
     );
 };
-
 
 const styles = {
     container: { padding: '80px 10%', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh', position: 'relative', overflow: 'hidden' },

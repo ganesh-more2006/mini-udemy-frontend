@@ -1,45 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom'; const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+import { useNavigate } from 'react-router-dom';
 
-    const handleLogin = async (e) => {
+const Signup = () => {
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' });
+    const navigate = useNavigate();
+    const API_URL = "https://mini-udemy-backend-production-855e.up.railway.app";
+
+    const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token); 
-                localStorage.setItem('user', JSON.stringify(res.data.user));
-                toast.success("Login Successful!");
-                window.location.href = "/"; 
-            }
+            await axios.post(`${API_URL}/api/auth/register`, formData);
+            toast.success("Success! Please Login.");
+            navigate('/login');
         } catch (err) { 
-            toast.error(err.response?.data?.message || "Login Failed"); 
+            toast.error(err.response?.data?.message || "Error"); 
         }
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.card}>
-                <h2 style={styles.title}>Login</h2>
-                <form onSubmit={handleLogin} style={styles.form}>
-                    <input type="email" name="email" autoComplete="username" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required style={styles.input} />
-                    
-                    <div style={styles.passwordWrapper}>
-                        <input type="password" name="password" autoComplete="current-password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required style={styles.input} />
-                      
-                        <div style={styles.forgotContainer}>
-                            <Link to="/forgot-password" style={styles.forgotLink}>Forgot Password?</Link>
-                        </div>
-                    </div>
-
-                    <button type="submit" style={styles.button}>Login</button>
-                </form>
-                <p style={styles.footerText}>New here? <a href="/signup" style={styles.link}>Create Account</a></p>
-            </div>
-        </div>
+        
+        <div>...</div>
     );
 };
 
