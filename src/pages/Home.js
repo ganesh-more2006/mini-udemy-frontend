@@ -14,7 +14,6 @@ const Home = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                // Sahi endpoint: /api/courses
                 const res = await axios.get(`${API_URL}/api/courses`);
                 setCourses(res.data);
                 setLoading(false);
@@ -27,52 +26,62 @@ const Home = () => {
     }, []);
 
     const deleteCourse = async (id) => {
-        if (window.confirm("Are you sure you want to delete this course?")) {
+        if (window.confirm("Are you sure?")) {
             try {
                 const token = localStorage.getItem('token');
-                const res = await axios.delete(`${API_URL}/api/courses/${id}`, {
+                await axios.delete(`${API_URL}/api/courses/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
-                if (res.status === 200) {
-                    setCourses(courses.filter(course => course._id !== id));
-                    alert("Course deleted successfully!");
-                }
-            } catch (err) { 
-                console.error("Delete Error:", err.response);
-                alert(err.response?.data?.message || "Delete failed"); 
-            }
+                setCourses(courses.filter(course => course._id !== id));
+                alert("Deleted!");
+            } catch (err) { alert("Delete failed"); }
         }
     };
 
-    const handleEnroll = async (courseId, price) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert("Please login to buy this course!");
-            return navigate('/login');
-        }
-
-        if (window.confirm(`The price is ₹${price}. Enroll now?`)) {
-            try {
-                const res = await axios.post(`${API_URL}/api/enrollments/enroll`, 
-                    { courseId }, 
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-                alert("Payment Successful & Enrolled!"); 
-                navigate('/my-courses'); 
-            } catch (err) {
-                alert(err.response?.data?.message || "Payment failed");
-            }
-        }
-    };
-
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Loading...</div>;
 
     return (
-        // Aapka existing JSX yahan aayega...
-        <div>... (Style aur HTML aapka purana hi rahega) ...</div>
+        <div style={{ padding: '40px', fontFamily: 'Arial' }}>
+            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 style={{ color: '#6366f1' }}>Explore Courses</h1>
+                <p>Start your learning journey today.</p>
+            </header>
+
+            <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+                gap: '25px' 
+            }}>
+                {courses.map((course) => (
+                    <div key={course._id} style={{ 
+                        border: '1px solid #eee', 
+                        borderRadius: '15px', 
+                        padding: '20px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.05)' 
+                    }}>
+                        <h3 style={{ marginBottom: '10px' }}>{course.title}</h3>
+                        <p style={{ color: '#666', fontSize: '14px' }}>{course.description}</p>
+                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontWeight: 'bold', fontSize: '18px' }}>₹{course.price}</span>
+                            {user && user.role === 'instructor' && (
+                                <button 
+                                    onClick={() => deleteCourse(course._id)}
+                                    style={{ background: '#ff4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer' }}
+                                >
+                                    Delete
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 };
+
+
+
+
 
 const styles = {
     container: { padding: '80px 10%', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh', position: 'relative', overflow: 'hidden' },
