@@ -22,7 +22,6 @@ const Home = () => {
         fetchCourses();
     }, []);
 
-    // Instructor check logic - fixing the role issue
     const isInstructor = user && (user.role === 'instructor' || user.user?.role === 'instructor');
 
     const fetchCourses = async () => {
@@ -31,7 +30,6 @@ const Home = () => {
             setCourses(res.data);
         } catch (err) {
             console.error("API Error:", err);
-            alert("Connection error. Please check your internet.");
         } finally {
             setLoading(false); 
         }
@@ -55,24 +53,30 @@ const Home = () => {
         }
     };
 
+    // FIXED: Edit Function added
+    const handleEdit = (courseId) => {
+        window.location.href = `/edit-course/${courseId}`;
+    };
+
+    // FIXED: Delete Function with full API logic
     const handleDelete = async (courseId) => {
-        if (window.confirm("Are you sure you want to delete this course?")) {
+        if (window.confirm("Bhai, kya aap sach mein ye course delete karna chahte hain?")) {
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`${API_URL}/api/courses/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                alert("Course deleted successfully!");
+                alert("Course successfully delete ho gaya!");
                 fetchCourses(); // List refresh karne ke liye
             } catch (err) {
-                alert("Failed to delete course.");
+                console.error("Delete Error:", err);
+                alert(err.response?.data?.message || "Failed to delete course.");
             }
         }
     };
 
     if (loading) return (
         <div style={styles.loader}>
-            <div className="spinner"></div>
             <p>Loading Professional Courses...</p>
         </div>
     );
@@ -95,36 +99,27 @@ const Home = () => {
                         
                         <div style={styles.cardBody}>
                             <h3 style={styles.courseTitle}>{c.title}</h3>
-                            <p style={styles.description}>{c.description.substring(0, 70)}...</p>
+                            <p style={styles.description}>{c.description?.substring(0, 70)}...</p>
                             
                             <div style={styles.priceRow}>
                                 <span style={styles.priceTag}>₹{c.price}</span>
                             </div>
 
-                            {/* Matching Horizontal Line */}
                             <hr style={styles.divider} />
                             
                             <div style={styles.actionArea}>
-                                {/* Student Enroll Button */}
                                 {(!user || user?.role === 'student') && (
                                     <button onClick={() => handleEnroll(c._id)} style={styles.enrollBtn}>
                                         Enroll Now
                                     </button>
                                 )}
 
-                                {/* Modern Instructor Buttons */}
                                 {isInstructor && (
                                     <div style={styles.instructorGroup}>
-                                        <button 
-                                            onClick={() => window.location.href=`/edit-course/${c._id}`} 
-                                            style={styles.editBtn}
-                                        >
+                                        <button onClick={() => handleEdit(c._id)} style={styles.editBtn}>
                                             Edit Course
                                         </button>
-                                        <button 
-                                            onClick={() => handleDelete(c._id)} 
-                                            style={styles.deleteBtn}
-                                        >
+                                        <button onClick={() => handleDelete(c._id)} style={styles.deleteBtn}>
                                             Delete
                                         </button>
                                     </div>
@@ -153,11 +148,11 @@ const styles = {
     priceTag: { fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' },
     divider: { border: '0', borderTop: '1px solid #f1f5f9', margin: '15px 0' },
     actionArea: { display: 'flex', flexDirection: 'column', gap: '10px' },
-    enrollBtn: { width: '100%', background: '#4f46e5', color: '#fff', padding: '12px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)' },
+    enrollBtn: { width: '100%', background: '#4f46e5', color: '#fff', padding: '12px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '700', fontSize: '1rem' },
     instructorGroup: { display: 'flex', gap: '10px' },
     editBtn: { flex: 2, background: '#f8fafc', color: '#475569', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' },
     deleteBtn: { flex: 1, background: '#fff1f2', color: '#e11d48', padding: '10px', border: '1px solid #fecdd3', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' },
-    loader: { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '80vh', color: '#4f46e5' }
+    loader: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }
 };
 
 export default Home;
