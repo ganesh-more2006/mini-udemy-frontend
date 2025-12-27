@@ -8,8 +8,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     
-    // ✅ Railway Backend URL
-    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const handleLogin = async (e) => {
         e.preventDefault();

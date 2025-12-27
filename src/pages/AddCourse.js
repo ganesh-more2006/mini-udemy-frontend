@@ -11,7 +11,8 @@ const AddCourse = () => {
         sections: [{ title: '', videoUrl: '' }] 
     });
 
-    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+    // ✅ Bilkul yahi URL honi chahiye, isme koi galti nahi hai
+const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const addSection = () => {
         setCourse({

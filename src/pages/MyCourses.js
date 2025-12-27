@@ -6,51 +6,66 @@ const MyCourses = () => {
     const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); 
+    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+
+    const courseImages = [
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80",
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&q=80",
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80"
+    ];
 
     useEffect(() => {
         const fetchMyCourses = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/enrollments/my-courses', {
+                const res = await axios.get(`${API_URL}/api/enrollments/my-courses`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setEnrollments(res.data);
-                setLoading(false);
             } catch (err) {
-                console.error("Error fetching enrolled courses", err);
+                console.error("Error", err);
+                alert("Failed to load your learning dashboard.");
+            } finally {
                 setLoading(false);
             }
         };
         fetchMyCourses();
     }, []);
 
-    if (loading) return <div style={styles.loader}>Loading Your Courses...</div>;
+    if (loading) return <div style={styles.loader}>Loading...</div>;
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.title}>My Enrolled Courses</h1>
+            <header style={styles.header}>
+                <h1 style={styles.title}>My Learning Dashboard</h1>
+                <p style={styles.subtitle}>Resume your professional journey</p>
+            </header>
             
             {enrollments.length === 0 ? (
                 <div style={styles.emptyState}>
-                    <p>You have not yet enrolled in any course.</p>
-                    <button onClick={() => navigate('/')} style={styles.btnStyle}>Browse Courses</button>
+                    <h3>No courses found.</h3>
+                    <button onClick={() => navigate('/')} style={styles.btnStyle}>Start Learning</button>
                 </div>
             ) : (
                 <div style={styles.grid}>
-                    {enrollments.map((item) => {
-                       
+                    {enrollments.map((item, index) => {
                         if (!item.course) return null; 
-
                         return (
                             <div key={item._id} style={styles.cardStyle}>
-                                <h3 style={styles.courseTitle}>{item.course.title}</h3>
-                                <p style={styles.courseDesc}>{item.course.description}</p>
-                                <button 
-                                    onClick={() => navigate(`/course-view/${item.course._id}`)} 
-                                    style={styles.btnStyle}
-                                >
-                                    Continue Learning
-                                </button>
+                                <img src={courseImages[index % 3]} alt="Thumbnail" style={styles.thumbnail} />
+                                <div style={styles.cardContent}>
+                                    <h3 style={styles.courseTitle}>{item.course.title}</h3>
+                                    <p style={styles.courseDesc}>{item.course.description.substring(0, 60)}...</p>
+                                   
+                                    <div style={{marginTop: 'auto'}}>
+                                        <button 
+                                            onClick={() => navigate(`/course-view/${item.course._id}`)} 
+                                            style={styles.btnStyle}
+                                        >
+                                            Continue Learning
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         );
                     })}
@@ -61,33 +76,35 @@ const MyCourses = () => {
 };
 
 const styles = {
-    container: { padding: '60px 10%', minHeight: '100vh', background: '#f8fafc' },
-    title: { marginBottom: '40px', color: '#1e293b', fontSize: '2rem', fontWeight: '800' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '25px' },
+    container: { padding: '50px 8%', minHeight: '100vh', background: '#f1f5f9' },
+    header: { marginBottom: '50px' },
+    title: { color: '#0f172a', fontSize: '2.5rem', fontWeight: '900' },
+    subtitle: { color: '#64748b' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' },
     cardStyle: {
         background: '#fff',
-        padding: '25px',
-        borderRadius: '20px',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        border: '1px solid #e2e8f0',
+        borderRadius: '24px',
+        overflow: 'hidden',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between'
+        flexDirection: 'column', 
+        height: '100%' 
     },
-    courseTitle: { color: '#6366f1', fontSize: '1.25rem', marginBottom: '10px' },
-    courseDesc: { color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', lineHeight: '1.5' },
+    thumbnail: { width: '100%', height: '160px', objectFit: 'cover' },
+    cardContent: { padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 },
+    courseTitle: { fontSize: '1.2rem', fontWeight: '800', marginBottom: '10px' },
+    courseDesc: { color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' },
     btnStyle: {
         background: '#6366f1',
         color: '#fff',
         border: 'none',
-        padding: '12px 20px',
-        borderRadius: '12px',
+        padding: '12px',
+        width: '100%',
+        borderRadius: '10px',
         cursor: 'pointer',
-        fontWeight: '700',
-        transition: '0.3s'
+        fontWeight: 'bold'
     },
-    loader: { textAlign: 'center', marginTop: '100px', fontSize: '1.2rem', color: '#6366f1' },
-    emptyState: { textAlign: 'center', marginTop: '50px', color: '#64748b' }
+    loader: { textAlign: 'center', marginTop: '100px' }
 };
 
 export default MyCourses;

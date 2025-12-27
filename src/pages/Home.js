@@ -5,92 +5,93 @@ const Home = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [editingCourse, setEditingCourse] = useState(null);
     
-    // ✅ Railway Backend URL
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+
+    // Professional Thumbnails (Harry & Apna College Style)
+    const courseImages = [
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80", // Web Dev
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&q=80", // Coding
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80", // Software
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&q=80"  // JavaScript
+    ];
 
     useEffect(() => {
         const loggedInUser = JSON.parse(localStorage.getItem('user'));
         setUser(loggedInUser);
         fetchCourses();
     }, []);
-const fetchCourses = async () => {
-    try {
-        const res = await axios.get(`${API_URL}/api/courses/all`);
-        setCourses(res.data);
-    } catch (err) {
-        console.error("API Error:", err);
-        // Isse aapko pata chalega ki error kya hai
-        alert("Backend se connect nahi ho paa raha! Console check karein."); 
-    } finally {
-        // ✅ Ye sabse important hai: ye loading screen ko band kar dega 
-        // chahe data mil jaye ya koi error aa jaye.
-        setLoading(false); 
-    }
-};
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Delete this course?")) return;
+    const fetchCourses = async () => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${API_URL}/api/courses/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            fetchCourses();
-            alert("Deleted!");
+            const res = await axios.get(`${API_URL}/api/courses/all`);
+            setCourses(res.data);
         } catch (err) {
-            alert("Delete failed");
+            console.error("API Error:", err);
+            alert("Connection error. Please check your internet.");
+        } finally {
+            setLoading(false); 
         }
     };
 
-    const handleUpdate = async (e) => {
-        e.preventDefault();
+    const handleEnroll = async (courseId) => {
+        if (!user) {
+            alert("Please Login to start your journey!");
+            window.location.href = "/login";
+            return;
+        }
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`${API_URL}/api/courses/${editingCourse._id}`, editingCourse, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setEditingCourse(null);
-            fetchCourses();
-            alert("Course Updated!");
+            await axios.post(`${API_URL}/api/enrollments/enroll`, 
+                { courseId }, 
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert("Success! Enrollment complete.");
         } catch (err) {
-            alert("Update failed");
+            alert(err.response?.data?.message || "Enrollment failed.");
         }
     };
 
-    if (loading) return <div style={{textAlign: 'center', marginTop: '100px'}}>Loading...</div>;
+    if (loading) return (
+        <div style={styles.loader}>
+            <div className="spinner"></div>
+            <p>Loading Professional Courses...</p>
+        </div>
+    );
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.mainTitle}>Explore Live Courses</h1>
-
-            {editingCourse && (
-                <div style={styles.modalOverlay}>
-                    <form style={styles.modal} onSubmit={handleUpdate}>
-                        <h3>Edit Course</h3>
-                        <input style={styles.modalInput} value={editingCourse.title} onChange={(e) => setEditingCourse({...editingCourse, title: e.target.value})} />
-                        <textarea style={styles.modalInput} value={editingCourse.description} onChange={(e) => setEditingCourse({...editingCourse, description: e.target.value})} />
-                        <input style={styles.modalInput} value={editingCourse.price} onChange={(e) => setEditingCourse({...editingCourse, price: e.target.value})} />
-                        <button type="submit" style={styles.editBtn}>Save Changes</button>
-                        <button type="button" onClick={() => setEditingCourse(null)} style={styles.deleteBtn}>Cancel</button>
-                    </form>
-                </div>
-            )}
+            <div style={styles.heroSection}>
+                <h1 style={styles.mainTitle}>Master Your Future</h1>
+                <p style={styles.subTitle}>Learn from the best in the industry</p>
+            </div>
 
             <div style={styles.grid}>
-                {courses.map(c => (
+                {courses.map((c, index) => (
                     <div key={c._id} style={styles.card}>
-                        <h3 style={styles.courseTitle}>{c.title}</h3>
-                        <p style={styles.description}>{c.description}</p>
-                        <div style={styles.footerRow}>
-                            <span style={styles.priceValue}>₹{c.price}</span>
-                            {user?.role === 'instructor' && (
-                                <div style={styles.adminPanel}>
-                                    <button onClick={() => setEditingCourse(c)} style={styles.editBtn}>Edit</button>
-                                    <button onClick={() => handleDelete(c._id)} style={styles.deleteBtn}>Delete</button>
+                        {/* Course Image */}
+                        <img 
+                            src={courseImages[index % courseImages.length]} 
+                            alt="Professional Course" 
+                            style={styles.courseImg} 
+                        />
+                        
+                        <div style={styles.cardBody}>
+                            <h3 style={styles.courseTitle}>{c.title}</h3>
+                            <p style={styles.description}>{c.description.substring(0, 70)}...</p>
+                            
+                            {/* Footer Row - Fixed Alignment */}
+                            <div style={styles.footerRow}>
+                                <div style={styles.priceSection}>
+                                    <span style={styles.priceTag}>₹{c.price}</span>
                                 </div>
-                            )}
+                                
+                                {user?.role === 'student' && (
+                                    <button onClick={() => handleEnroll(c._id)} style={styles.enrollBtn}>
+                                        Enroll Now
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -100,20 +101,21 @@ const fetchCourses = async () => {
 };
 
 const styles = {
-    container: { padding: '50px 10%', background: '#f5f7fa', minHeight: '100vh' },
-    mainTitle: { textAlign: 'center', fontSize: '2.5rem', marginBottom: '40px' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' },
-    card: { background: '#fff', borderRadius: '20px', padding: '20px', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' },
-    courseTitle: { fontSize: '1.2rem', fontWeight: '800' },
-    description: { color: '#666', fontSize: '0.9rem', margin: '10px 0' },
-    footerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' },
-    priceValue: { fontSize: '1.3rem', fontWeight: '900' },
-    adminPanel: { display: 'flex', gap: '10px' },
-    editBtn: { background: '#fbbf24', color: '#fff', padding: '8px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer' },
-    deleteBtn: { background: '#ef4444', color: '#fff', padding: '8px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer' },
-    modalOverlay: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 },
-    modal: { background: '#fff', padding: '30px', borderRadius: '20px', display: 'flex', flexDirection: 'column', gap: '15px', width: '400px' },
-    modalInput: { padding: '10px', borderRadius: '10px', border: '1px solid #ddd' }
+    container: { padding: '60px 5%', background: '#f8fafc', minHeight: '100vh', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
+    heroSection: { textAlign: 'center', marginBottom: '60px' },
+    mainTitle: { fontSize: '3.2rem', fontWeight: '800', color: '#0f172a', letterSpacing: '-1px' },
+    subTitle: { fontSize: '1.2rem', color: '#64748b', marginTop: '10px' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '35px' },
+    card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', transition: '0.3s' },
+    courseImg: { width: '100%', height: '180px', objectFit: 'cover' },
+    cardBody: { padding: '24px' },
+    courseTitle: { fontSize: '1.3rem', fontWeight: '700', color: '#1e293b', marginBottom: '10px', height: '50px', overflow: 'hidden' },
+    description: { color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', height: '40px' },
+    footerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' },
+    priceSection: { display: 'flex', flexDirection: 'column' },
+    priceTag: { fontSize: '1.6rem', fontWeight: '800', color: '#1e293b' },
+    enrollBtn: { background: '#4f46e5', color: '#fff', padding: '12px 24px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '700', fontSize: '0.9rem', boxShadow: '0 4px 10px rgba(79, 70, 229, 0.3)' },
+    loader: { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '80vh', color: '#4f46e5', fontWeight: 'bold' }
 };
 
 export default Home;
