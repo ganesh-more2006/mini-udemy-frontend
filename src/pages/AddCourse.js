@@ -3,7 +3,6 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const AddCourse = () => {
-
     const [course, setCourse] = useState({ 
         title: '', 
         description: '', 
@@ -12,13 +11,14 @@ const AddCourse = () => {
         sections: [{ title: '', videoUrl: '' }] 
     });
 
+    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+
     const addSection = () => {
         setCourse({
             ...course,
             sections: [...course.sections, { title: '', videoUrl: '' }]
         });
     };
-
 
     const handleSectionChange = (index, e) => {
         const newSections = [...course.sections];
@@ -36,7 +36,8 @@ const AddCourse = () => {
         }
 
         try {
-            await axios.post('http://localhost:5000/api/courses/add', course, {
+            // ✅ Ab ye Live URL par request bhejega
+            await axios.post(`${API_URL}/api/courses/add`, course, {
                 headers: { 
                     Authorization: `Bearer ${token.trim()}`,
                     'Content-Type': 'application/json'
@@ -64,7 +65,6 @@ const AddCourse = () => {
 
                 <hr style={{ border: '0.5px solid #eee', margin: '10px 0' }} />
                 
-                {/* ✅ Lectures/Sections Section */}
                 <h4 style={{ margin: 0 }}>Course Curriculum (Lectures)</h4>
                 {course.sections.map((section, index) => (
                     <div key={index} style={styles.sectionBox}>
@@ -89,14 +89,12 @@ const AddCourse = () => {
                 ))}
 
                 <button type="button" onClick={addSection} style={styles.addBtn}>+ Add More Lecture</button>
-                
                 <button type="submit" style={styles.submitBtn}>Publish Course</button>
             </form>
         </div>
     );
 };
 
-// --- Modern Styles ---
 const styles = {
     input: { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', outline: 'none' },
     sectionBox: { padding: '15px', background: '#f9fafb', borderRadius: '10px', border: '1px solid #eee' },

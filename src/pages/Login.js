@@ -6,8 +6,10 @@ import { Link } from 'react-router-dom';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const API_URL = "https://mini-udemy-backend-production-855e.up.railway.app";
-
+    const [showPassword, setShowPassword] = useState(false);
+    
+    // ✅ Railway Backend URL
+    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,13 +31,12 @@ const Login = () => {
             <div style={styles.card}>
                 <h2 style={styles.title}>Login</h2>
                 <form onSubmit={handleLogin} style={styles.form}>
-                    <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required style={styles.input} />
+                    <input type="email" placeholder="Email" autoComplete="email" onChange={(e) => setEmail(e.target.value)} required style={styles.input} />
                     <div style={styles.passwordWrapper}>
-                        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required style={styles.input} />
-                        <div style={styles.forgotContainer}>
-                            <Link to="/forgot-password" style={styles.forgotLink}>Forgot Password?</Link>
-                        </div>
+                        <input type={showPassword ? "text" : "password"} placeholder="Password" autoComplete="current-password" onChange={(e) => setPassword(e.target.value)} required style={styles.input} />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.showBtn}>{showPassword ? "Hide" : "Show"}</button>
                     </div>
+                    <div style={{ textAlign: 'right' }}><Link to="/forgot-password" style={styles.forgotLink}>Forgot Password?</Link></div>
                     <button type="submit" style={styles.button}>Login</button>
                 </form>
                 <p style={styles.footerText}>New here? <Link to="/signup" style={styles.link}>Create Account</Link></p>
@@ -50,8 +51,8 @@ const styles = {
     title: { fontSize: '2rem', fontWeight: '800', marginBottom: '30px' },
     form: { display: 'flex', flexDirection: 'column', gap: '20px' },
     input: { padding: '16px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '1rem', width: '100%', boxSizing: 'border-box' },
-    passwordWrapper: { display: 'flex', flexDirection: 'column', gap: '8px' },
-    forgotContainer: { textAlign: 'right' },
+    passwordWrapper: { position: 'relative', width: '100%' },
+    showBtn: { position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', color: '#6366f1', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' },
     forgotLink: { color: '#6366f1', fontSize: '0.85rem', fontWeight: '600', textDecoration: 'none' },
     button: { padding: '16px', borderRadius: '12px', border: 'none', background: '#6366f1', color: '#fff', fontWeight: '700', cursor: 'pointer' },
     footerText: { marginTop: '20px' },
