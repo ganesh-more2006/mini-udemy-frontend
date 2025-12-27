@@ -7,7 +7,7 @@ const Signup = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' });
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+   const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const handleSignup = async (e) => {
         e.preventDefault();

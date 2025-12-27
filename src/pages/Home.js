@@ -15,16 +15,20 @@ const Home = () => {
         setUser(loggedInUser);
         fetchCourses();
     }, []);
-
-    const fetchCourses = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/api/courses/all`);
-            setCourses(res.data);
-            setLoading(false);
-        } catch (err) {
-            setLoading(false);
-        }
-    };
+const fetchCourses = async () => {
+    try {
+        const res = await axios.get(`${API_URL}/api/courses/all`);
+        setCourses(res.data);
+    } catch (err) {
+        console.error("API Error:", err);
+        // Isse aapko pata chalega ki error kya hai
+        alert("Backend se connect nahi ho paa raha! Console check karein."); 
+    } finally {
+        // ✅ Ye sabse important hai: ye loading screen ko band kar dega 
+        // chahe data mil jaye ya koi error aa jaye.
+        setLoading(false); 
+    }
+};
 
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this course?")) return;
