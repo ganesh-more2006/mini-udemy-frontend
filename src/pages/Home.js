@@ -100,12 +100,13 @@ const styles = {
     instructorGroup: { 
         display: 'flex', 
         flexDirection: 'row', 
-        gap: '10px', 
+        gap: '8px', // Mobile par spacing tight rakhne ke liye 8px
         width: '100%',
         boxSizing: 'border-box'
     },
     editBtn: { 
         flex: 1, 
+        minWidth: '0', // Mobile text truncation prevent karne ke liye
         background: '#4f46e5', 
         color: '#fff', 
         padding: '10px 5px', 
@@ -118,6 +119,7 @@ const styles = {
     },
     deleteBtn: { 
         flex: 1, 
+        minWidth: '0',
         background: '#ef4444', 
         color: '#fff', 
         padding: '10px 5px', 
@@ -128,7 +130,7 @@ const styles = {
         fontSize: '0.85rem',
         textAlign: 'center'
     },
-    loader: { textAlign: 'center', marginTop: '50px' }
+    loader: { textAlign: 'center', marginTop: '150px', fontSize: '1.2rem', fontWeight: '600' }
 };
 
 export default Home;
