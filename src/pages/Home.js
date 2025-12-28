@@ -35,7 +35,6 @@ const Home = () => {
         }
     };
 
-    // FIXED: Using navigate instead of window.location
     const handleEdit = (courseId) => {
         navigate(`/edit-course/${courseId}`);
     };
@@ -98,9 +97,37 @@ const styles = {
     courseTitle: { fontSize: '1.1rem', fontWeight: '700' },
     priceTag: { fontSize: '1.2rem', fontWeight: '800', display: 'block', margin: '10px 0' },
     actionArea: { marginTop: '10px' },
-    instructorGroup: { display: 'flex', gap: '10px' },
-    editBtn: { flex: 1, padding: '8px', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' },
-    deleteBtn: { flex: 1, padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' },
+    instructorGroup: { 
+        display: 'flex', 
+        flexDirection: 'row', 
+        gap: '10px', 
+        width: '100%',
+        boxSizing: 'border-box'
+    },
+    editBtn: { 
+        flex: 1, 
+        background: '#4f46e5', 
+        color: '#fff', 
+        padding: '10px 5px', 
+        border: 'none', 
+        borderRadius: '8px', 
+        cursor: 'pointer', 
+        fontWeight: '700', 
+        fontSize: '0.85rem',
+        textAlign: 'center'
+    },
+    deleteBtn: { 
+        flex: 1, 
+        background: '#ef4444', 
+        color: '#fff', 
+        padding: '10px 5px', 
+        border: 'none', 
+        borderRadius: '8px', 
+        cursor: 'pointer', 
+        fontWeight: '700', 
+        fontSize: '0.85rem',
+        textAlign: 'center'
+    },
     loader: { textAlign: 'center', marginTop: '50px' }
 };
 
