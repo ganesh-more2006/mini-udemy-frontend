@@ -111,6 +111,15 @@ const Home = () => {
 };
 
 const styles = {
+    heroSection: { 
+        textAlign: 'center', 
+        marginBottom: '50px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    mainTitle: { fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0 },
+    subTitle: { color: '#64748b', fontSize: '1.1rem', marginTop: '10px' },
     container: { padding: '20px 5%', background: '#f8fafc', minHeight: '100vh' },
     modalOverlay: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 },
     paymentCard: { background: '#fff', padding: '30px', borderRadius: '20px', textAlign: 'center', width: '320px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' },
