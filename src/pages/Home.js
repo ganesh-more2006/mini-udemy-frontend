@@ -31,7 +31,7 @@ const Home = () => {
     };
 
     const handleDelete = async (courseId) => {
-        if (window.confirm("Bhai, pakka delete karna hai?")) {
+        if (window.confirm("pakka delete karna hai?")) {
             const loadingToast = toast.loading("Deleting course...");
             try {
                 const token = localStorage.getItem('token');
