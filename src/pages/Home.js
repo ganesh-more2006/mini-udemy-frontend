@@ -117,9 +117,28 @@ const styles = {
     paymentBtn: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' },
     cancelBtn: { color: '#ef4444', border: 'none', background: 'none', marginTop: '10px', cursor: 'pointer', fontWeight: 'bold' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' },
-    card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' },
+    
     courseImg: { width: '100%', height: '160px', objectFit: 'cover' },
-    cardBody: { padding: '20px' },
+    card: { 
+    background: '#fff', 
+    borderRadius: '16px', 
+    overflow: 'hidden', 
+    boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+    display: 'flex',          
+    flexDirection: 'column',  
+    height: '100%'            
+},
+cardBody: { 
+    padding: '20px', 
+    display: 'flex',          
+    flexDirection: 'column', 
+    flexGrow: 1               
+},
+actionArea: { 
+    marginTop: 'auto',        
+    width: '100%',
+    paddingTop: '15px'        
+},
     priceTag: { fontSize: '1.2rem', fontWeight: '800', margin: '10px 0' },
     enrollBtn: { width: '100%', background: '#6366f1', color: '#fff', padding: '12px', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' },
     instructorGroup: { display: 'flex', gap: '10px' },
