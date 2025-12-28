@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
     
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
@@ -18,7 +19,14 @@ const Login = () => {
                 localStorage.setItem('token', res.data.token); 
                 localStorage.setItem('user', JSON.stringify(res.data.user));
                 toast.success("Login Successful!");
-                window.location.href = "/"; 
+                
+                // Redirect based on role
+                if (res.data.user.role === 'instructor') {
+                    navigate('/'); 
+                } else {
+                    navigate('/'); // Student moves to home to see Enroll button
+                }
+                window.location.reload(); // Navbar refresh ke liye
             }
         } catch (err) { 
             toast.error(err.response?.data?.message || "Login Failed"); 
@@ -28,17 +36,39 @@ const Login = () => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <h2 style={styles.title}>Login</h2>
+                <h2 style={styles.title}>Welcome Back</h2>
                 <form onSubmit={handleLogin} style={styles.form}>
-                    <input type="email" placeholder="Email" autoComplete="email" onChange={(e) => setEmail(e.target.value)} required style={styles.input} />
+                    <input 
+                        type="email" 
+                        placeholder="Email Address" 
+                        autoComplete="email" 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                        style={styles.input} 
+                    />
                     <div style={styles.passwordWrapper}>
-                        <input type={showPassword ? "text" : "password"} placeholder="Password" autoComplete="current-password" onChange={(e) => setPassword(e.target.value)} required style={styles.input} />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.showBtn}>{showPassword ? "Hide" : "Show"}</button>
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="Password" 
+                            autoComplete="current-password" 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required 
+                            style={styles.input} 
+                        />
+                        <button 
+                            type="button" 
+                            onClick={() => setShowPassword(!showPassword)} 
+                            style={styles.showBtn}
+                        >
+                            {showPassword ? "Hide" : "Show"}
+                        </button>
                     </div>
-                    <div style={{ textAlign: 'right' }}><Link to="/forgot-password" style={styles.forgotLink}>Forgot Password?</Link></div>
-                    <button type="submit" style={styles.button}>Login</button>
+                    <div style={{ textAlign: 'right' }}>
+                        <Link to="/forgot-password" style={styles.forgotLink}>Forgot Password?</Link>
+                    </div>
+                    <button type="submit" style={styles.button}>Login to Dashboard</button>
                 </form>
-                <p style={styles.footerText}>New here? <Link to="/signup" style={styles.link}>Create Account</Link></p>
+                <p style={styles.footerText}>New to Mini Udemy? <Link to="/signup" style={styles.link}>Create Account</Link></p>
             </div>
         </div>
     );
@@ -53,7 +83,7 @@ const styles = {
     passwordWrapper: { position: 'relative', width: '100%' },
     showBtn: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', color: '#6366f1', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' },
     forgotLink: { color: '#6366f1', fontSize: '0.85rem', fontWeight: '600', textDecoration: 'none' },
-    button: { padding: '14px', borderRadius: '10px', border: 'none', background: '#6366f1', color: '#fff', fontWeight: '700', cursor: 'pointer', fontSize: '1rem' },
+    button: { padding: '14px', borderRadius: '10px', border: 'none', background: '#6366f1', color: '#fff', fontWeight: '700', cursor: 'pointer', fontSize: '1rem', marginTop: '10px' },
     footerText: { marginTop: '20px', fontSize: '0.9rem', color: '#64748b' },
     link: { color: '#6366f1', fontWeight: '700', textDecoration: 'none' }
 };

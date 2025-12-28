@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 const MyCourses = () => {
     const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
-    const courseImages = [
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80",
-        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&q=80",
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80"
-    ];
+    // Dummy images for fallback if course image is missing
+    const fallbackImage = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80";
 
     useEffect(() => {
         const fetchMyCourses = async () => {
@@ -23,88 +20,77 @@ const MyCourses = () => {
                 });
                 setEnrollments(res.data);
             } catch (err) {
-                console.error("Error", err);
-                alert("Failed to load your learning dashboard.");
+                console.error("Fetch Error:", err);
             } finally {
                 setLoading(false);
             }
         };
         fetchMyCourses();
-    }, []);
+    }, [API_URL]);
 
-    if (loading) return <div style={styles.loader}>Loading...</div>;
+    if (loading) return <div style={styles.loader}>Loading your learning journey...</div>;
 
     return (
         <div style={styles.container}>
-            <header style={styles.header}>
-                <h1 style={styles.title}>My Learning Dashboard</h1>
-                <p style={styles.subtitle}>Resume your professional journey</p>
-            </header>
-            
-            {enrollments.length === 0 ? (
-                <div style={styles.emptyState}>
-                    <h3>No courses found.</h3>
-                    <button onClick={() => navigate('/')} style={styles.btnStyle}>Start Learning</button>
-                </div>
-            ) : (
-                <div style={styles.grid}>
-                    {enrollments.map((item, index) => {
-                        if (!item.course) return null; 
-                        return (
-                            <div key={item._id} style={styles.cardStyle}>
-                                <img src={courseImages[index % 3]} alt="Thumbnail" style={styles.thumbnail} />
-                                <div style={styles.cardContent}>
-                                    <h3 style={styles.courseTitle}>{item.course.title}</h3>
-                                    <p style={styles.courseDesc}>{item.course.description.substring(0, 60)}...</p>
-                                   
-                                    <div style={{marginTop: 'auto'}}>
-                                        <button 
-                                            onClick={() => navigate(`/course-view/${item.course._id}`)} 
-                                            style={styles.btnStyle}
-                                        >
-                                            Continue Learning
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
+            <div style={styles.header}>
+                <h2 style={styles.title}>My Learning Dashboard 📚</h2>
+                <p style={styles.subText}>You have {enrollments.length} active courses</p>
+            </div>
+
+            <div style={styles.grid}>
+                {enrollments.length > 0 ? enrollments.map((en) => (
+                    <div key={en._id} style={styles.card}>
+                        {/* Course Image Added */}
+                        <img 
+                            src={en.course?.image || fallbackImage} 
+                            style={styles.courseImg} 
+                            alt="course" 
+                        />
+                        
+                        <div style={styles.badge}>Paid via {en.paymentMethod || 'UPI'}</div>
+                        
+                        <div style={styles.cardBody}>
+                            <h3 style={styles.courseTitle}>{en.course?.title}</h3>
+                            <p style={styles.price}>Purchase Price: ₹{en.course?.price}</p>
+                            <p style={styles.date}>Enrolled on: {new Date(en.enrolledAt).toLocaleDateString()}</p>
+                            
+                            <button 
+                                onClick={() => navigate(`/course-view/${en.course?._id}`)} 
+                                style={styles.startBtn}
+                            >
+                                Start Learning Now
+                            </button>
+                        </div>
+                    </div>
+                )) : (
+                    <div style={styles.emptyCard}>
+                        <h3>Abhi tak koi course nahi liya?</h3>
+                        <p>Learn new skills today!</p>
+                        <button onClick={() => navigate('/')} style={styles.exploreBtn}>Explore Courses</button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
 const styles = {
-    container: { padding: '50px 8%', minHeight: '100vh', background: '#f1f5f9' },
-    header: { marginBottom: '50px' },
-    title: { color: '#0f172a', fontSize: '2.5rem', fontWeight: '900' },
-    subtitle: { color: '#64748b' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' },
-    cardStyle: {
-        background: '#fff',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
-        display: 'flex',
-        flexDirection: 'column', 
-        height: '100%' 
-    },
-    thumbnail: { width: '100%', height: '160px', objectFit: 'cover' },
-    cardContent: { padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 },
-    courseTitle: { fontSize: '1.2rem', fontWeight: '800', marginBottom: '10px' },
-    courseDesc: { color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' },
-    btnStyle: {
-        background: '#6366f1',
-        color: '#fff',
-        border: 'none',
-        padding: '12px',
-        width: '100%',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        fontWeight: 'bold'
-    },
-    loader: { textAlign: 'center', marginTop: '100px' }
+    container: { padding: '40px 5%', background: '#f8fafc', minHeight: '100vh' },
+    header: { marginBottom: '30px' },
+    title: { fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '5px' },
+    subText: { color: '#64748b', fontSize: '1rem' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '25px' },
+    card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', position: 'relative', transition: 'transform 0.2s' },
+    courseImg: { width: '100%', height: '160px', objectFit: 'cover' },
+    badge: { position: 'absolute', top: '12px', right: '12px', background: '#dcfce7', color: '#15803d', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' },
+    cardBody: { padding: '20px' },
+    courseTitle: { fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px', height: '2.8rem', overflow: 'hidden' },
+    price: { fontSize: '0.9rem', fontWeight: '600', color: '#6366f1', marginBottom: '5px' },
+    date: { fontSize: '0.8rem', color: '#94a3b8', marginBottom: '20px' },
+    startBtn: { width: '100%', padding: '12px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.95rem', transition: '0.3s' },
+    loader: { textAlign: 'center', marginTop: '150px', fontSize: '1.2rem', color: '#6366f1', fontWeight: '600' },
+    emptyCard: { textAlign: 'center', gridColumn: '1/-1', padding: '60px 20px', background: '#fff', borderRadius: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' },
+    exploreBtn: { marginTop: '20px', padding: '12px 30px', background: '#1e293b', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '600', cursor: 'pointer' }
 };
 
 export default MyCourses;
