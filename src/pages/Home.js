@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
     
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
-    // Professional Thumbnails
     const courseImages = [
         "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80",
         "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&q=80",
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80",
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&q=80"
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80"
     ];
 
     useEffect(() => {
@@ -22,7 +22,6 @@ const Home = () => {
         fetchCourses();
     }, []);
 
-    // Instructor check logic
     const isInstructor = user && (user.role === 'instructor' || user.user?.role === 'instructor');
 
     const fetchCourses = async () => {
@@ -36,91 +35,46 @@ const Home = () => {
         }
     };
 
-    const handleEnroll = async (courseId) => {
-        if (!user) {
-            alert("Please Login to start your journey!");
-            window.location.href = "/login";
-            return;
-        }
-        try {
-            const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/api/enrollments/enroll`, 
-                { courseId }, 
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            alert("Success! Enrollment complete.");
-        } catch (err) {
-            alert(err.response?.data?.message || "Enrollment failed.");
-        }
-    };
-
+    // FIXED: Using navigate instead of window.location
     const handleEdit = (courseId) => {
-        window.location.href = `/edit-course/${courseId}`;
+        navigate(`/edit-course/${courseId}`);
     };
 
     const handleDelete = async (courseId) => {
-        if (window.confirm("Bhai, kya aap sach mein ye course delete karna chahte hain?")) {
+        if (window.confirm("Bhai, delete karna hai?")) {
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`${API_URL}/api/courses/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                alert("Course successfully delete ho gaya!");
-                fetchCourses(); 
+                fetchCourses();
             } catch (err) {
-                console.error("Delete Error:", err);
-                alert(err.response?.data?.message || "Failed to delete course.");
+                alert("Delete failed");
             }
         }
     };
 
-    if (loading) return (
-        <div style={styles.loader}>
-            <p>Loading Professional Courses...</p>
-        </div>
-    );
+    if (loading) return <div style={styles.loader}>Loading...</div>;
 
     return (
         <div style={styles.container}>
             <div style={styles.heroSection}>
                 <h1 style={styles.mainTitle}>Master Your Future</h1>
-                <p style={styles.subTitle}>Learn from the best in the industry</p>
+                <p style={styles.subTitle}>Learn from the best</p>
             </div>
-
             <div style={styles.grid}>
                 {courses.map((c, index) => (
                     <div key={c._id} style={styles.card}>
-                        <img 
-                            src={courseImages[index % courseImages.length]} 
-                            alt="Professional Course" 
-                            style={styles.courseImg} 
-                        />
-                        
+                        <img src={courseImages[index % courseImages.length]} style={styles.courseImg} alt="course" />
                         <div style={styles.cardBody}>
                             <h3 style={styles.courseTitle}>{c.title}</h3>
-                            <p style={styles.description}>{c.description?.substring(0, 70)}...</p>
-                            
-                            <div style={styles.priceRow}>
-                                <span style={styles.priceTag}>₹{c.price}</span>
-                            </div>
-
-                            <hr style={styles.divider} />
-                            
+                            <p style={styles.description}>{c.description?.substring(0, 50)}...</p>
+                            <span style={styles.priceTag}>₹{c.price}</span>
                             <div style={styles.actionArea}>
-                                {(!user || user?.role === 'student') && (
-                                    <button onClick={() => handleEnroll(c._id)} style={styles.enrollBtn}>
-                                        Enroll Now
-                                    </button>
-                                )}
-
                                 {isInstructor && (
                                     <div style={styles.instructorGroup}>
-                                        <button onClick={() => handleEdit(c._id)} style={styles.editBtn}>
-                                            Edit Course
-                                        </button>
-                                        <button onClick={() => handleDelete(c._id)} style={styles.deleteBtn}>
-                                            Delete
-                                        </button>
+                                        <button onClick={() => handleEdit(c._id)} style={styles.editBtn}>Edit</button>
+                                        <button onClick={() => handleDelete(c._id)} style={styles.deleteBtn}>Delete</button>
                                     </div>
                                 )}
                             </div>
@@ -133,74 +87,21 @@ const Home = () => {
 };
 
 const styles = {
-    container: { 
-        padding: '40px 5%', 
-        background: '#f8fafc', 
-        minHeight: '100vh', 
-        fontFamily: "'Segoe UI', sans-serif" 
-    },
-    heroSection: { textAlign: 'center', marginBottom: '40px' },
-    mainTitle: { 
-        fontSize: 'calc(1.8rem + 1.5vw)', 
-        fontWeight: '800', 
-        color: '#0f172a', 
-        lineHeight: '1.2'
-    },
-    subTitle: { fontSize: '1rem', color: '#64748b', marginTop: '10px' },
-    grid: { 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-        gap: '20px' 
-    },
-    card: { 
-        background: '#fff', 
-        borderRadius: '12px', 
-        overflow: 'hidden', 
-        boxShadow: '0 4px 15px rgba(0,0,0,0.05)', 
-        border: '1px solid #f1f5f9' 
-    },
+    container: { padding: '20px 5%', background: '#f8fafc', minHeight: '100vh' },
+    heroSection: { textAlign: 'center', marginBottom: '30px' },
+    mainTitle: { fontSize: 'calc(1.5rem + 1vw)', fontWeight: '800' },
+    subTitle: { color: '#64748b' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' },
+    card: { background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' },
     courseImg: { width: '100%', height: '160px', objectFit: 'cover' },
-    cardBody: { padding: '16px' },
-    courseTitle: { fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px' },
-    description: { color: '#64748b', fontSize: '0.85rem', marginBottom: '15px', height: '40px', overflow: 'hidden' },
-    priceRow: { marginBottom: '12px' },
-    priceTag: { fontSize: '1.3rem', fontWeight: '800', color: '#1e293b' },
-    divider: { border: '0', borderTop: '1px solid #f1f5f9', margin: '12px 0' },
-    actionArea: { display: 'flex', flexDirection: 'column', gap: '8px' },
-    enrollBtn: { 
-        width: '100%', 
-        background: '#4f46e5', 
-        color: '#fff', 
-        padding: '10px', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer', 
-        fontWeight: '700' 
-    },
-    instructorGroup: { display: 'flex', gap: '8px' },
-    editBtn: { 
-        flex: 1, 
-        background: '#f8fafc', 
-        color: '#475569', 
-        padding: '8px', 
-        border: '1px solid #e2e8f0', 
-        borderRadius: '6px', 
-        cursor: 'pointer', 
-        fontSize: '0.8rem',
-        fontWeight: '600'
-    },
-    deleteBtn: { 
-        flex: 1, 
-        background: '#fff1f2', 
-        color: '#e11d48', 
-        padding: '8px', 
-        border: '1px solid #fecdd3', 
-        borderRadius: '6px', 
-        cursor: 'pointer', 
-        fontSize: '0.8rem',
-        fontWeight: '600'
-    },
-    loader: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }
+    cardBody: { padding: '15px' },
+    courseTitle: { fontSize: '1.1rem', fontWeight: '700' },
+    priceTag: { fontSize: '1.2rem', fontWeight: '800', display: 'block', margin: '10px 0' },
+    actionArea: { marginTop: '10px' },
+    instructorGroup: { display: 'flex', gap: '10px' },
+    editBtn: { flex: 1, padding: '8px', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' },
+    deleteBtn: { flex: 1, padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' },
+    loader: { textAlign: 'center', marginTop: '50px' }
 };
 
 export default Home;

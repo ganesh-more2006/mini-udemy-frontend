@@ -7,7 +7,7 @@ const Signup = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' });
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-   const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
+    const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -35,7 +35,7 @@ const Signup = () => {
                     <input 
                         type="email" 
                         placeholder="Email" 
-                        autoComplete="email" // ✅ Email suggestions ke liye
+                        autoComplete="email"
                         onChange={(e) => setFormData({...formData, email: e.target.value})} 
                         required style={styles.input} 
                     />
@@ -71,15 +71,15 @@ const Signup = () => {
 };
 
 const styles = {
-    container: { height: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f5f7fa' },
-    card: { width: '100%', maxWidth: '420px', padding: '50px 40px', background: '#fff', borderRadius: '24px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', textAlign: 'center' },
-    title: { fontSize: '2rem', fontWeight: '800', marginBottom: '30px' },
-    form: { display: 'flex', flexDirection: 'column', gap: '20px' },
-    input: { padding: '16px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '1rem', width: '100%', boxSizing: 'border-box' },
+    container: { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8fafc', padding: '20px' },
+    card: { width: '100%', maxWidth: '400px', padding: '40px 25px', background: '#fff', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', textAlign: 'center' },
+    title: { fontSize: '1.8rem', fontWeight: '800', marginBottom: '25px', color: '#1e293b' },
+    form: { display: 'flex', flexDirection: 'column', gap: '15px' },
+    input: { padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', width: '100%', boxSizing: 'border-box', outline: 'none' },
     passwordWrapper: { position: 'relative', width: '100%' },
-    showBtn: { position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', color: '#6366f1', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' },
-    button: { padding: '16px', borderRadius: '12px', border: 'none', background: '#6366f1', color: '#fff', fontWeight: '700', cursor: 'pointer', marginTop: '10px' },
-    footerText: { marginTop: '20px' },
+    showBtn: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', color: '#6366f1', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem' },
+    button: { padding: '14px', borderRadius: '10px', border: 'none', background: '#6366f1', color: '#fff', fontWeight: '700', cursor: 'pointer', marginTop: '10px', fontSize: '1rem' },
+    footerText: { marginTop: '20px', fontSize: '0.9rem', color: '#64748b' },
     link: { color: '#6366f1', fontWeight: '700', textDecoration: 'none' }
 };
 

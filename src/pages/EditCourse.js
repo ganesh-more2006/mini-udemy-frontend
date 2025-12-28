@@ -7,117 +7,46 @@ const EditCourse = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [course, setCourse] = useState({ title: '', description: '', price: '', category: '' });
-
-    // LIVE Backend URL use karna hai
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     useEffect(() => {
         const fetchCourse = async () => {
             try {
-                // FIXED: Localhost ko replace kiya live URL se
+                // Fixed ID template literal
                 const res = await axios.get(`${API_URL}/api/courses/${id}`);
                 setCourse(res.data);
             } catch (err) {
-                console.error("Fetch Error:", err);
-                toast.error("Course load nahi ho pa raha!");
+                toast.error("Error loading course");
             }
         };
-        fetchCourse();
-    }, [id]);
+        if(id) fetchCourse();
+    }, [id, API_URL]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            // FIXED: Localhost ko replace kiya live URL se
             await axios.put(`${API_URL}/api/courses/${id}`, course, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success("Course Updated Successfully!");
+            toast.success("Updated!");
             navigate('/');
         } catch (err) {
-            console.error("Update Error:", err);
-            toast.error(err.response?.data?.message || "Update Failed!");
+            toast.error("Update failed");
         }
     };
 
     return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Edit Course</h2>
-            <form onSubmit={handleUpdate} style={styles.form}>
-                <label style={styles.label}>Course Title</label>
-                <input 
-                    type="text" 
-                    value={course.title} 
-                    style={styles.input}
-                    onChange={(e) => setCourse({...course, title: e.target.value})} 
-                    required
-                />
-
-                <label style={styles.label}>Description</label>
-                <textarea 
-                    value={course.description} 
-                    style={{...styles.input, height: '100px'}}
-                    onChange={(e) => setCourse({...course, description: e.target.value})} 
-                    required
-                />
-
-                <label style={styles.label}>Price (₹)</label>
-                <input 
-                    type="number" 
-                    value={course.price} 
-                    style={styles.input}
-                    onChange={(e) => setCourse({...course, price: e.target.value})} 
-                    required
-                />
-
-                <label style={styles.label}>Category</label>
-                <input 
-                    type="text" 
-                    value={course.category} 
-                    style={styles.input}
-                    onChange={(e) => setCourse({...course, category: e.target.value})} 
-                    required
-                />
-
-                <button type="submit" style={styles.submitBtn}>Update Course Now</button>
+        <div style={{ maxWidth: '400px', margin: '40px auto', padding: '20px', background: '#fff', borderRadius: '10px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
+            <h2>Edit Course</h2>
+            <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <input type="text" value={course.title} placeholder="Title" onChange={(e) => setCourse({...course, title: e.target.value})} style={{padding: '10px'}} />
+                <textarea value={course.description} placeholder="Description" onChange={(e) => setCourse({...course, description: e.target.value})} style={{padding: '10px', height: '80px'}} />
+                <input type="number" value={course.price} placeholder="Price" onChange={(e) => setCourse({...course, price: e.target.value})} style={{padding: '10px'}} />
+                <button type="submit" style={{ padding: '12px', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Save Changes</button>
             </form>
         </div>
     );
-};
-
-// Mobile Responsive Styles
-const styles = {
-    container: { 
-        maxWidth: '500px', 
-        margin: '40px auto', 
-        padding: '20px', 
-        background: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        fontFamily: "'Segoe UI', sans-serif"
-    },
-    title: { textAlign: 'center', marginBottom: '20px', color: '#1e293b' },
-    form: { display: 'flex', flexDirection: 'column', gap: '15px' },
-    label: { fontSize: '0.9rem', fontWeight: '600', color: '#475569', marginBottom: '-10px' },
-    input: { 
-        padding: '12px', 
-        borderRadius: '8px', 
-        border: '1px solid #cbd5e1', 
-        fontSize: '1rem',
-        outline: 'none'
-    },
-    submitBtn: { 
-        background: '#f39c12', 
-        color: 'white', 
-        padding: '14px', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer', 
-        fontWeight: '700',
-        fontSize: '1rem',
-        marginTop: '10px'
-    }
 };
 
 export default EditCourse;
