@@ -30,6 +30,22 @@ const Home = () => {
         finally { setLoading(false); }
     };
 
+    const handleDelete = async (courseId) => {
+        if (window.confirm("Bhai, pakka delete karna hai?")) {
+            const loadingToast = toast.loading("Deleting course...");
+            try {
+                const token = localStorage.getItem('token');
+                const res = await axios.delete(`${API_URL}/api/courses/${courseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success(res.data.message || "Deleted Successfully", { id: loadingToast });
+                fetchCourses(); 
+            } catch (err) {
+                toast.error(err.response?.data?.message || "Delete failed", { id: loadingToast });
+            }
+        }
+    };
+
     const handleEnrollClick = (course) => {
         if (!user) {
             toast.error("Please Login First!");
@@ -62,7 +78,6 @@ const Home = () => {
 
     return (
         <div style={styles.container}>
-            {/* Payment Modal */}
             {showPayment && (
                 <div style={styles.modalOverlay}>
                     <div style={styles.paymentCard}>
@@ -85,7 +100,7 @@ const Home = () => {
             </div>
 
             <div style={styles.grid}>
-                {courses.map((c, index) => (
+                {courses.map((c) => (
                     <div key={c._id} style={styles.card}>
                         <img src={"https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500"} style={styles.courseImg} alt="course" />
                         <div style={styles.cardBody}>
@@ -98,7 +113,8 @@ const Home = () => {
                                 {isInstructor && (
                                     <div style={styles.instructorGroup}>
                                         <button onClick={() => navigate(`/edit-course/${c._id}`)} style={styles.editBtn}>Edit</button>
-                                        <button onClick={() => navigate(`/delete/${c._id}`)} style={styles.deleteBtn}>Delete</button>
+                                      
+                                        <button onClick={() => handleDelete(c._id)} style={styles.deleteBtn}>Delete</button>
                                     </div>
                                 )}
                             </div>
@@ -111,13 +127,7 @@ const Home = () => {
 };
 
 const styles = {
-    heroSection: { 
-        textAlign: 'center', 
-        marginBottom: '50px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
+    heroSection: { textAlign: 'center', marginBottom: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center' },
     mainTitle: { fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', margin: 0 },
     subTitle: { color: '#64748b', fontSize: '1.1rem', marginTop: '10px' },
     container: { padding: '20px 5%', background: '#f8fafc', minHeight: '100vh' },
@@ -126,28 +136,10 @@ const styles = {
     paymentBtn: { width: '100%', padding: '14px', margin: '10px 0', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' },
     cancelBtn: { color: '#ef4444', border: 'none', background: 'none', marginTop: '10px', cursor: 'pointer', fontWeight: 'bold' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' },
-    
     courseImg: { width: '100%', height: '160px', objectFit: 'cover' },
-    card: { 
-    background: '#fff', 
-    borderRadius: '16px', 
-    overflow: 'hidden', 
-    boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
-    display: 'flex',          
-    flexDirection: 'column',  
-    height: '100%'            
-},
-cardBody: { 
-    padding: '20px', 
-    display: 'flex',          
-    flexDirection: 'column', 
-    flexGrow: 1               
-},
-actionArea: { 
-    marginTop: 'auto',        
-    width: '100%',
-    paddingTop: '15px'        
-},
+    card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', height: '100%' },
+    cardBody: { padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 },
+    actionArea: { marginTop: 'auto', width: '100%', paddingTop: '15px' },
     priceTag: { fontSize: '1.2rem', fontWeight: '800', margin: '10px 0' },
     enrollBtn: { width: '100%', background: '#6366f1', color: '#fff', padding: '12px', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' },
     instructorGroup: { display: 'flex', gap: '10px' },
