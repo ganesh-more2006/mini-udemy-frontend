@@ -40,7 +40,7 @@ const MyCourses = () => {
             <div style={styles.grid}>
                 {enrollments.length > 0 ? enrollments.map((en) => (
                     <div key={en._id} style={styles.card}>
-                        {/* Course Image Added */}
+                        
                         <img 
                             src={en.course?.image || fallbackImage} 
                             style={styles.courseImg} 
@@ -64,7 +64,7 @@ const MyCourses = () => {
                     </div>
                 )) : (
                     <div style={styles.emptyCard}>
-                        <h3>Abhi tak koi course nahi liya?</h3>
+                        <h3>Haven't taken any courses yet?</h3>
                         <p>Learn new skills today!</p>
                         <button onClick={() => navigate('/')} style={styles.exploreBtn}>Explore Courses</button>
                     </div>

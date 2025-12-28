@@ -12,7 +12,7 @@ const EditCourse = () => {
     useEffect(() => {
         const fetchCourse = async () => {
             try {
-                // Fixed ID template literal
+               
                 const res = await axios.get(`${API_URL}/api/courses/${id}`);
                 setCourse(res.data);
             } catch (err) {

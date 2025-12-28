@@ -25,7 +25,7 @@ const Navbar = () => {
             </div>
 
             <div style={styles.navLinks}>
-                {/* Desktop par Home dikhega, mobile par hidden rakh sakte hain space ke liye */}
+              
                 <Link to="/" style={styles.link} className="nav-hide-mobile">Home</Link>
 
                 {user && user.role === 'student' && (
@@ -43,7 +43,7 @@ const Navbar = () => {
                         <div style={styles.avatar}>
                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                         </div>
-                        {/* Mobile par name hide kar rahe hain space ke liye */}
+                      
                         <span style={styles.userName} className="nav-hide-mobile">
                             Hi, {user.name ? user.name.split(' ')[0] : 'User'}
                         </span>
@@ -57,7 +57,6 @@ const Navbar = () => {
                 )}
             </div>
             
-            {/* Mobile Responsiveness ke liye ek chota sa CSS trick niche styles mein hai */}
             <style>
                 {`
                     @media (max-width: 600px) {

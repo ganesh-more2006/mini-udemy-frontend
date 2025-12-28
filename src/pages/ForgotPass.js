@@ -7,8 +7,7 @@ const ForgotPass = () => {
     const [otp, setOtp] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [otpSent, setOtpSent] = useState(false); 
-    
-    // LIVE URL Update
+   
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     const handleSendOTP = async (e) => {

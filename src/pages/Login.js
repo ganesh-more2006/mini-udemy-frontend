@@ -20,13 +20,12 @@ const Login = () => {
                 localStorage.setItem('user', JSON.stringify(res.data.user));
                 toast.success("Login Successful!");
                 
-                // Redirect based on role
                 if (res.data.user.role === 'instructor') {
                     navigate('/'); 
                 } else {
-                    navigate('/'); // Student moves to home to see Enroll button
+                    navigate('/'); 
                 }
-                window.location.reload(); // Navbar refresh ke liye
+                window.location.reload(); 
             }
         } catch (err) { 
             toast.error(err.response?.data?.message || "Login Failed"); 

@@ -7,7 +7,7 @@ const CourseView = () => {
     const [course, setCourse] = useState(null);
     const [activeVideo, setActiveVideo] = useState("");
     
-    // ✅ Live API URL
+    
     const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
 
     useEffect(() => {
@@ -45,7 +45,6 @@ const CourseView = () => {
 
     if (!course) return <div style={styles.loader}>Loading course lectures...</div>;
 
-    // Data source select karein (sections ya lectures)
     const courseContent = course.sections || course.lectures || [];
 
     return (

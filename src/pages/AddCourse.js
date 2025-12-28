@@ -37,7 +37,7 @@ const API_URL = "https://mini-udemy-backend-production-65d8.up.railway.app";
         }
 
         try {
-            // ✅ Ab ye Live URL par request bhejega
+           
             await axios.post(`${API_URL}/api/courses/add`, course, {
                 headers: { 
                     Authorization: `Bearer ${token.trim()}`,
