@@ -93,43 +93,51 @@ const styles = {
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' },
     card: { background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' },
     courseImg: { width: '100%', height: '160px', objectFit: 'cover' },
-    cardBody: { padding: '15px' },
+    cardBody: { 
+    padding: '20px', 
+    display: 'flex',
+    flexDirection: 'column'
+},
     courseTitle: { fontSize: '1.1rem', fontWeight: '700' },
     priceTag: { fontSize: '1.2rem', fontWeight: '800', display: 'block', margin: '10px 0' },
-    actionArea: { marginTop: '10px' },
-    instructorGroup: { 
-        display: 'flex', 
-        flexDirection: 'row', 
-        gap: '8px', // Mobile par spacing tight rakhne ke liye 8px
-        width: '100%',
-        boxSizing: 'border-box'
-    },
-    editBtn: { 
-        flex: 1, 
-        minWidth: '0', // Mobile text truncation prevent karne ke liye
-        background: '#4f46e5', 
-        color: '#fff', 
-        padding: '10px 5px', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer', 
-        fontWeight: '700', 
-        fontSize: '0.85rem',
-        textAlign: 'center'
-    },
-    deleteBtn: { 
-        flex: 1, 
-        minWidth: '0',
-        background: '#ef4444', 
-        color: '#fff', 
-        padding: '10px 5px', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer', 
-        fontWeight: '700', 
-        fontSize: '0.85rem',
-        textAlign: 'center'
-    },
+    actionArea: { 
+    marginTop: '15px',
+    width: '100%'
+},
+   
+instructorGroup: { 
+    display: 'flex', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', // Buttons ke beech barabar gap ke liye
+    gap: '12px', 
+    width: '100%'
+},
+editBtn: { 
+    flex: 1, 
+    background: '#4f46e5', 
+    color: '#fff', 
+    padding: '12px 5px', 
+    border: 'none', 
+    borderRadius: '10px', 
+    cursor: 'pointer', 
+    fontWeight: '700', 
+    fontSize: '0.85rem',
+    textAlign: 'center',
+    transition: '0.3s'
+},
+deleteBtn: { 
+    flex: 1, 
+    background: '#ef4444', 
+    color: '#fff', 
+    padding: '12px 5px', 
+    border: 'none', 
+    borderRadius: '10px', 
+    cursor: 'pointer', 
+    fontWeight: '700', 
+    fontSize: '0.85rem',
+    textAlign: 'center',
+    transition: '0.3s'
+},
     loader: { textAlign: 'center', marginTop: '150px', fontSize: '1.2rem', fontWeight: '600' }
 };
 
